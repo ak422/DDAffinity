@@ -1,0 +1,10 @@
+transform:
+## Only backbone atoms and CB are visible to rotamer predictor
+  - type: select_atom
+    resolution: backbone+CB
+  - type: selected_region_fixed_size_patch
+    select_attr: mut_flag
+    patch_size: 256
+#    seq_neighbours: 2
+
+  

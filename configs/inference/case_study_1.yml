@@ -1,0 +1,75 @@
+checkpoint: ./trained_models/DDAffinity.pt
+early_stoppingdir: ./early_stopping
+model:
+  encoder:
+    node_feat_dim: 128
+    pair_feat_dim: 64
+    num_layers: 3
+  node_features: 128
+  edge_features: 128
+  hidden_dim: 128
+  seq_neighbours:  1
+  seq_nonneighbours: 7
+  num_encoder_layers: 3
+  num_decoder_layers: 3
+#  _replace_rate: 0.3
+#  _mask_token_rate: 0.5
+  k_neighbors: 16
+  dropout: 0.1
+  augment_eps: 0.2
+  patch_size: 256
+train:
+  loss_weights:
+    loss_mse: 1.0
+  max_iters: 100000
+  val_freq: 1000
+  early_stop_iters: 70000
+  batch_size: 16
+
+  seed: 2022
+  max_grad_norm: 100.0
+  optimizer:
+    type: adam
+    lr: 6.e-4
+    weight_decay: 0.0
+    beta1: 0.9
+    beta2: 0.999
+pdb_wt_dir: ./data/SKEMPI2/S285_cache/wildtype1
+pdb_mt_dir: ./data/SKEMPI2/S285_cache/optimized1
+cache_dir: ./data/SKEMPI2/S285_cache/entries_cache1
+mutations:
+# H-CDR1
+- GH26*
+- YH27*
+- TH28*
+- FH29*
+- TH30*
+- TH31*
+- YH32*
+# H-CDR2
+- NH52*
+- AH53*
+- GH54*
+- NH55*
+- GH56*
+- NH57*
+# H-CDR3
+- GH99*
+- GH100*
+- GH101*
+- RH102*
+- RH103*
+- LH104*
+- QH105*
+- FH106*
+- DH107*
+- YH108*
+- FH109*
+- DH110*
+- YH111*
+interest:
+- TH31W
+- AH53F
+- NH57L
+- RH103M
+- LH104F
