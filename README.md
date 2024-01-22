@@ -50,28 +50,10 @@ python case_study.py ./configs/inference/case_study_1.yml --device cuda:1
 python case_study.py ./configs/inference/case_study_2.yml --device cuda:1
 ```
 
-### Predict Mutational Effects for a SARS-CoV-2 Human Antibody and Other Protein Complexes
-
-```bash
-python pointmut_analysis.py ./configs/inference/case_study.yml
-```
-
-💡 The script can also predict mutational effects for other protein complexes. Please refer to the example configuration file  [`7FAE_RBD_Fv_mutation.yml`](./configs/inference/7FAE_RBD_Fv_mutation.yml) to create your own mutation instruction.
-
 ### Train DDAffinity
 
 ```bash
 python train_DDAffinity.py ./configs/train/mpnn_ddg.yml --num_cvfolds 10 --device cuda:1
 ```
-
-
-```bibtex
-@inproceedings{luo2023rotamer,
-  title={Rotamer Density Estimator is an Unsupervised Learner of the Effect of Mutations on Protein-Protein Interaction},
-  author={Shitong Luo and Yufeng Su and Zuofan Wu and Chenpeng Su and Jian Peng and Jianzhu Ma},
-  booktitle={The Eleventh International Conference on Learning Representations },
-  year={2023},
-  url={https://openreview.net/forum?id=_X9Yl1K2mD}
-}
-```
-
+# Acknowledgements
+We acknowledge that parts of our code is adapted from [Rotamer Density Estimator (RDE)](https://github.com/luost26/RDE-PPI). Thanks to the authors for sharing their codes. 
