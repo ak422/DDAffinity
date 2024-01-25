@@ -22,14 +22,6 @@ data:
   pdb_wt_dir: ./data/SKEMPI2/SKEMPI2_cache/wildtype1
   pdb_mt_dir: ./data/SKEMPI2/SKEMPI2_cache/optimized1
   cache_dir: ./data/SKEMPI2/SKEMPI2_cache/entries_cache1
-#  csv_path: ./data/SKEMPI2/S4947.csv
-#  pdb_wt_dir: ./data/SKEMPI2/S4947_cache/wildtype1
-#  pdb_mt_dir: ./data/SKEMPI2/S4947_cache/optimized1
-#  cache_dir: ./data/SKEMPI2/S4947_cache/entries_cache1
-#  csv_path: ./data/SKEMPI2/S1759.csv
-#  pdb_wt_dir: ./data/SKEMPI2/S1759_cache/wildtype1
-#  pdb_mt_dir: ./data/SKEMPI2/S1759_cache/optimized1
-#  cache_dir: ./data/SKEMPI2/S1759_cache/entries_cache1
 #  csv_path: ./data/SKEMPI2/S1340.csv
 #  pdb_wt_dir: ./data/SKEMPI2/S1340_cache/wildtype1
 #  pdb_mt_dir: ./data/SKEMPI2/SS1340_cache/optimized1

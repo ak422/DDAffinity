@@ -37,6 +37,9 @@ train:
 pdb_wt_dir: ./data/SKEMPI2/S285_cache/wildtype1
 pdb_mt_dir: ./data/SKEMPI2/S285_cache/optimized1
 cache_dir: ./data/SKEMPI2/S285_cache/entries_cache1
+#pdb_wt_dir: ./data/SKEMPI2/S595_cache/wildtype1
+#pdb_mt_dir: ./data/SKEMPI2/S595_cache/optimized1
+#cache_dir: ./data/SKEMPI2/S595_cache/entries_cache1
 mutations:
 # H-CDR1
 - GH26*

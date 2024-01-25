@@ -191,7 +191,7 @@ if __name__ == '__main__':
 
         if True:
             results = []
-            # Saving checkpoint: DDAffinity
+            # Saving 10-fold checkpoint: DDAffinity
             logger.info(f'Saving checkpoint: DDAffinity.pt')
             cv_mgr.save_state_dict(args,config)
             # Loading checkpoint: DDAffinity

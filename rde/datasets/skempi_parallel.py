@@ -148,7 +148,7 @@ def load_category_entries(csv_path, pdb_wt_dir, pdb_mt_dir, block_list={'1KBH'})
         group1 = row['Partner1']
         group2 = row['Partner2']
 
-        if pdbcode in block_list:
+        if pdbcode.split("_")[1] in block_list:
             continue
         mut_str = row['Mutation(s)_cleaned']
         mut_list = set(mut_str.split(','))
@@ -167,11 +167,11 @@ def load_category_entries(csv_path, pdb_wt_dir, pdb_mt_dir, block_list={'1KBH'})
             group_ligand, group_receptor = group2, group1
 
         if row['Label'] == "forward":
-            pdb_wt_path = os.path.join(pdb_wt_dir, '{}_{}.pdb'.format(str(i), pdbcode.upper()))
-            pdb_mt_path = os.path.join(pdb_mt_dir, '{}_{}.pdb'.format(str(i), pdbcode.upper()))
+            pdb_wt_path = os.path.join(pdb_wt_dir, '{}.pdb'.format(pdbcode.upper()))
+            pdb_mt_path = os.path.join(pdb_mt_dir, '{}.pdb'.format(pdbcode.upper()))
         else:    # 处理S1707的逆突变
-            pdb_mt_path = os.path.join(pdb_wt_dir, '{}_{}.pdb'.format(str(i), pdbcode.upper()))
-            pdb_wt_path = os.path.join(pdb_mt_dir, '{}_{}.pdb'.format(str(i), pdbcode.upper()))
+            pdb_mt_path = os.path.join(pdb_wt_dir, '{}.pdb'.format(pdbcode.upper()))
+            pdb_wt_path = os.path.join(pdb_mt_dir, '{}.pdb'.format(pdbcode.upper()))
 
         if not os.path.exists(pdb_wt_path) or not os.path.exists(pdb_mt_path):
             continue
@@ -181,10 +181,10 @@ def load_category_entries(csv_path, pdb_wt_dir, pdb_mt_dir, block_list={'1KBH'})
 
         entry = {
             'id': i,
-            'complex': row['#Pdb'],
+            'complex': pdbcode.split("_")[1],
             'mutstr': mut_str,
             'num_muts': len(muts),
-            'pdbcode': str(i)+"_"+pdbcode,
+            'pdbcode': pdbcode.upper(),
             'group_ligand': list(group_ligand),
             'group_receptor': list(group_receptor),
             'mutations': muts,
@@ -227,10 +227,11 @@ class SkempiDataset_lmdb(Dataset):
         split='train', 
         split_seed=2022,
         num_preprocess_jobs=math.floor(cpu_count() * 0.6),
-        transform=None,
-        is_single=False,
+        transform=None, 
         blocklist=frozenset({'1KBH'}), 
         reset=False,
+        # ak422
+        is_single=2,  # 0:single,1:multiple,2:overall
     ):
         super().__init__()
         self.csv_path = csv_path
@@ -293,19 +294,24 @@ class SkempiDataset_lmdb(Dataset):
         entries = []
         for cplx in complexes_this:
             #  single or multiple
-            if self.is_single == False:
-                entries += complex_to_entries[cplx]
-            else:
+            if self.is_single == 0:
                 for complex_item in complex_to_entries[cplx]:
                     if complex_item['num_muts'] > 1:
                         continue
                     else:
                         entries += [complex_item]
+            elif self.is_single == 1:
+                for complex_item in complex_to_entries[cplx]:
+                    if complex_item['num_muts'] == 1:
+                        continue
+                    else:
+                        entries += [complex_item]
+            else:
+                entries += complex_to_entries[cplx]
 
         self.entries = entries
         
     def _preprocess_entries(self):
-        # entries_full = load_skempi_entries(self.csv_path, self.pdb_wt_dir, self.pdb_mt_dir, self.blocklist)
         entries_full = load_category_entries(self.csv_path, self.pdb_wt_dir, self.pdb_mt_dir, self.blocklist)
         with open(self.entries_cache, 'wb') as f:
             pickle.dump(entries_full, f)      # 按数据集划分

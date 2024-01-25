@@ -3,7 +3,7 @@
 
 DDAffinity: Predicting the changes in binding affinity of multiple point mutations using protein three-dimensional structure
 
-[[Github]](https://www.biorxiv.org/content/10.1101/2023.02.28.530137)
+[[Github]](https://github.com/ak422/DDAffinity)
 
 ## Install
 
@@ -18,13 +18,13 @@ The default PyTorch version is 1.12.1 and cudatoolkit version is 11.3. They can 
 
 ## Preparation of processed dataset
 
-We generated all protein mutant complex data from wild-type complex data  in  [SKEMPI v2 Database](https://opig.stats.ox.ac.uk/webapps/oas/oas) using rde/datasets/Foldx.py and [SKEMPI2.csv](https://drive.google.com/file/d/19QTWf7Wg2Gci1sy4e5aWHbY_8HCWcRBP/view?usp=drive_link).  Then we use rde/datasets/skempi2_parallel.py to transform the PDB files of wild-type and mutant complexes  into processed dataset [SKEMPI2_cache](https://drive.google.com/file/d/1VgvcWT9gCBsBQ2f65Eix_vNNXqxWHIK1/view?usp=drive_link).
+We generated all protein mutant complex PDB data and wild-type complex PDB data from PDBs file [data/SKEMPI2/PDBs](https://drive.google.com/file/d/1SQTxpGr3P9hFhzmPCGIlAf0ggBSVoDVi/view?usp=drive_link), rde/datasets/FoldX.py, [data/SKEMPI2/SKEMPI2.csv](https://drive.google.com/file/d/15KHjAh_wIcoEbEmS5AHslewJHArgBvIc/view?usp=drive_link), and [FoldX](https://foldxsuite.crg.eu/) tool. Then we use rde/datasets/skempi_parallel.py to transform the PDB files of wild-type and mutant complexes into processed dataset [SKEMPI2_cache](https://drive.google.com/file/d/1p2ky9I8CwbCErGF0fw9jrAvrFkV95ZMe/view?usp=drive_link).
 
 ### Datasets
 
 | Dataset   | Download Script                                    | Processed Dataset                                                                                     |
 | --------- | -------------------------------------------------- |-------------------------------------------------------------------------------------------------------|
-| [SKEMPI v2](https://life.bsc.es/pid/skempi2) | [`data/get_skempi_v2.sh`](./data/get_skempi_v2.sh) | [`data/SKEMPI2/SKEMPI2_cache`](https://drive.google.com/file/d/1VgvcWT9gCBsBQ2f65Eix_vNNXqxWHIK1/view?usp=sharing) |
+| [SKEMPI v2](https://life.bsc.es/pid/skempi2) | [`data/get_skempi_v2.sh`](./data/get_skempi_v2.sh) | [`data/SKEMPI2/SKEMPI2_cache`](https://drive.google.com/file/d/1p2ky9I8CwbCErGF0fw9jrAvrFkV95ZMe/view?usp=drive_link) |
 
 ### Trained Weights
 

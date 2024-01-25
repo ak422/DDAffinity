@@ -39,16 +39,13 @@ class CaseDataset(Dataset):
 
         self.data = []
         self.db_conn = None
-        # self._load_data(pdb_wt_path, pdb_mt_path)
         self.entries_cache = os.path.join(cache_dir, 'entries.pkl')
         self._load_entries(reset=False)
 
         self.mutations = self._parse_mutations(mutations)
-        # self.save_mutations(self.mutations)
 
         self.transform = Compose([
             SelectAtom('backbone+CB'),
-            # AddAtomNoise(noise_std=0.01),
             SelectedRegionFixedSizePatch('mut_flag', 256)
         ])
     def save_mutations(self,mutations):
@@ -154,7 +151,6 @@ class CaseDataset(Dataset):
 
     def __getitem__(self, index):
         entry = self.entries[index]  # 按蛋白质复合物结构读取
-        # pdbcode = str(index) + "_7FAE_RBD_Fv"
         pdbcode = entry['pdbcode']
 
         data_wt, seq_map_wt = self._get_from_db("wt_" + pdbcode)  # Made a copy
@@ -253,13 +249,13 @@ if __name__ == '__main__':
     results.to_csv(args.output_results, index=False)
 
     results = pd.read_csv(args.output_results)
-    if 'S285' in config.cache_dir:
+    if 'S285' in config.cache_dir or 'S595' in config.cache_dir:
         # # : 285
         results = results.groupby('mutstr').agg(ddG_pred_max= ("ddG_pred", "max"),
                                                 ddG=("ddG", "mean"),
                                                 num_muts=("num_muts", "mean")).reset_index()
         results['ddG_pred'] = results['ddG_pred_max']
-        results['datasets'] = '6M0J'
+        results['datasets'] = 'S285/S595'
         df_metrics = eval_skempi_three_modes(results)
         df_metrics.to_csv(args.output_metrics)
         print(df_metrics)
@@ -269,6 +265,6 @@ if __name__ == '__main__':
                                                 ddG=("ddG", "mean"),
                                                 num_muts=("num_muts", "mean")).reset_index()
         results['rank'] = (results['ddG_pred_max']).rank() / len(results)
-        results['datasets'] = '7FAE'
+        results['datasets'] = 'S494'
         if 'interest' in config and config.interest:
             print(results[results['mutstr'].isin(config.interest)])
