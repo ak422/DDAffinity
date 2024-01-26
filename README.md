@@ -1,5 +1,5 @@
 # DDAffinity-network
-<img src="./assets/cover.png" alt="cover" style="width:80%;" />
+<img src="./assets/cover.png" alt="cover" style="width:50%;" />
 
 DDAffinity: Predicting the changes in binding affinity of multiple point mutations using protein three-dimensional structure
 
