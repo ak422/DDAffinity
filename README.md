@@ -27,8 +27,11 @@ We generated all protein mutant complex PDB data and wild-type complex PDB data 
 | [SKEMPI v2](https://life.bsc.es/pid/skempi2) | [`data/get_skempi_v2.sh`](./data/get_skempi_v2.sh) | [`data/SKEMPI2/SKEMPI2_cache`](https://drive.google.com/file/d/1p2ky9I8CwbCErGF0fw9jrAvrFkV95ZMe/view?usp=drive_link) |
 
 ### Trained Weights
+The overall SKEMPI2 trained weights is located in:
+[DDAffinity](https://drive.google.com/file/d/1JLdHrKkwWLTsiNBaH8-x9qnEpfp9q-73/view?usp=drive_link)
 
-https://drive.google.com/file/d/1JLdHrKkwWLTsiNBaH8-x9qnEpfp9q-73/view?usp=drive_link
+The S1340 trained weights is located in:
+[S1340](https://drive.google.com/file/d/12_nh2Z1PA16Icm1H1dh_ndafPnGMdm1Z/view?usp=drive_link)
 
 ## Usage
 
@@ -36,6 +39,12 @@ https://drive.google.com/file/d/1JLdHrKkwWLTsiNBaH8-x9qnEpfp9q-73/view?usp=drive
 
 ```bash
 python test_DDAffinity.py ./configs/train/mpnn_ddg.yml --device cuda:1
+```
+
+### Blind testing: non-redundant blind testing on the multiple point mutation dataset M595
+
+```bash
+python case_study.py ./configs/inference/blind_testing.yml --device cuda:1
 ```
 
 ### Case Study 1: Predict Mutation Effects for SARS-CoV-2 RBD
