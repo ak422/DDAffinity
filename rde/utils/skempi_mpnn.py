@@ -155,7 +155,7 @@ def analyze_all_results(df):
         'SKEMPI2': [overall_correlations,
                     overall_rmse_mae,
                     overall_auroc],
-        '6M0J': [overall_correlations,
+        'case_study': [overall_correlations,
                  overall_rmse_mae,
                  overall_auroc]
     }
