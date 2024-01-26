@@ -26,10 +26,10 @@ We generated all protein mutant complex PDB data and wild-type complex PDB data 
 |----------------------------------------------| ------------------------------------------------- |-----------------------------------------------------------------------------------------------------------------------|
 | [SKEMPI v2](https://life.bsc.es/pid/skempi2) | [`data/get_skempi_v2.sh`](./data/get_skempi_v2.sh) | [`data/SKEMPI2/SKEMPI2_cache`](https://drive.google.com/file/d/1p2ky9I8CwbCErGF0fw9jrAvrFkV95ZMe/view?usp=drive_link) |
 | SKEMPI2                                      | —                                                 | [SKEMPI2.csv](https://drive.google.com/file/d/15KHjAh_wIcoEbEmS5AHslewJHArgBvIc/view?usp=drive_link)                  |
-| S1707                                        | —                                                 | [S1707.csv](https://drive.google.com/file/d/1JdXZ_DaYC0AusU6gpgQu0KWc-7W4ilf6/view?usp=drive_link)                    |
+| M1707                                        | —                                                 | [M1707.csv](https://drive.google.com/file/d/1JdXZ_DaYC0AusU6gpgQu0KWc-7W4ilf6/view?usp=drive_link)                    |
 | S1131                                        | —                                                 | [S1131.csv](https://drive.google.com/file/d/1yq8C2MVVBa51Zh1icwsM2cPWAE_Z_m9C/view?usp=drive_link)                    |
-| S1340                                        | —                                                 | [S1340.csv](https://drive.google.com/file/d/1dX_RUbxNg5NEp1QzEF7-YAqGn-vHiwJv/view?usp=drive_link)                    |
-| S595                                         | —                                                 | [S595.csv](https://drive.google.com/file/d/1RarKcz3eya0gSHUX3C4xPtzLYnu3jbBH/view?usp=drive_link)                     |
+| M1340                                        | —                                                 | [M1340.csv](https://drive.google.com/file/d/1dX_RUbxNg5NEp1QzEF7-YAqGn-vHiwJv/view?usp=drive_link)                    |
+| M595                                         | —                                                 | [M595.csv](https://drive.google.com/file/d/1RarKcz3eya0gSHUX3C4xPtzLYnu3jbBH/view?usp=drive_link)                     |
 | S494                                         | —                                                 | [S494.csv](https://drive.google.com/file/d/1DiFiYAoWZNP-x9YxfleBpa7WfUladeuY/view?usp=drive_link)                     |
 | S285                                         | —                                                 | [S285.csv](https://drive.google.com/file/d/1BqHuKV35ybQZxO_PXzlwYlJhQcwZZGdv/view?usp=drive_link)                     |
 
