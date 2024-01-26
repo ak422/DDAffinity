@@ -100,7 +100,7 @@ class SkempiDatasetManager(object):
             collate_fn=PaddingCollate(config.data.val.transform[1].patch_size),
             shuffle=True,
             num_workers=self.num_workers
-        )  # 调用train_loader时，首先完成DataLoader初始化，然后再执行train_dataset定义的变换
+        )
         train_iterator = inf_iterator(train_loader)
         val_loader = DataLoader(
             val_dataset, 

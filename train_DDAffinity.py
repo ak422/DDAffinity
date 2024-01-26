@@ -91,9 +91,8 @@ if __name__ == '__main__':
     def train(it):
         fold = it % args.num_cvfolds
         model, optimizer, early_stopping = cv_mgr.get(fold)
-        # 达到早停止条件时，early_stop会被置为True
         if early_stopping.early_stop:
-            return  # 跳出迭代，结束训练
+            return
 
         time_start = current_milli_time()
         model.train()

@@ -276,7 +276,6 @@ class CrossValidation(object):
             self.early_stoppings.append(early_stopping)
 
     def get(self, fold):
-        # return self.models[fold], self.optimizers[fold], self.schedulers[fold]
         return self.models[fold], self.optimizers[fold],self.early_stoppings[fold]
 
     def to(self, device):
@@ -289,10 +288,8 @@ class CrossValidation(object):
         optimizers = []
         for fold in range(self.num_cvfolds):
             early_stopping_path = os.path.join(self.early_stoppingdir, f'Fold_{fold}_best_network.pt')
-            # model, optimizer, _ = cv_mgr.get(fold)
             model = torch.load(early_stopping_path, map_location=args.device)
             models.append(model)
-            # optimizers.append(optimizer)
 
         state_dict =  {
             'config': config,

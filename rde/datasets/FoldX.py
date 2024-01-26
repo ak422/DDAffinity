@@ -38,7 +38,6 @@ def main():
         wildstr = ",".join(wild_list) + ";"
         mutstr = ",".join(mut_list) + ";"
 
-        # 若文件存在即返回
         graph_out = os.path.join("../../data/SKEMPI2/SKEMPI2_cache/optimized", f"{str(i)}_{pdbcode}.pdb")
         os.system("mkdir -p {}".format(os.path.dirname(graph_out)))
         if os.path.exists(graph_out):
@@ -46,8 +45,7 @@ def main():
             continue
 
         print(f"generating {i}-th file")
-        # build the mutant file
-        # 第三步：利用foldX 将野生型 突变为 野生型
+        # build the wild-type file
         individual_file = os.path.join(workdir,'individual_list.txt')
         with open(individual_file, 'w') as f:
             cont = wildstr
@@ -62,7 +60,6 @@ def main():
         os.system(f'mv {workdir}/{pdbcode}_1.pdb {wildtype_dir}/{str(i)}_{pdbcode}.pdb')
 
         # build the mutant file
-        # 第三步：利用foldX 将野生型 突变为 突变型
         individual_file = os.path.join(workdir, 'individual_list.txt')
         with open(individual_file, 'w') as f:
             cont = mutstr
@@ -70,10 +67,9 @@ def main():
         pdb_id = f"{str(i)}_{pdbcode}.pdb"
         pdb_dir = wildtype_dir
         comm = '../../data/SKEMPI2/FoldX --command=BuildModel --numberOfRuns=1 --pdb={}  --mutant-file={}  --output-dir={} --pdb-dir={} >{}/foldx.log'.format(pdb_id, individual_file, workdir, pdb_dir, workdir)
-        os.system(comm)  # 在Unix上，返回值是进程的退出状态，在Windows上，返回值是系统 shell 程序在运行命令后返回的值。
-        # 如果执行成功，那么会返回0，表示命令执行成功。
+        os.system(comm)
 
-        # 对突变型执行能量优化
+        # energy optimization
         comm = '../../data/SKEMPI2/FoldX --command=Optimize --pdb={}  --output-dir={} --pdb-dir={} >{}/foldx.log'.format(f"{str(i)}_" + pdbcode + "_1" + ".pdb", workdir, workdir, workdir)
         os.system(comm)
 

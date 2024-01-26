@@ -250,7 +250,7 @@ if __name__ == '__main__':
 
     results = pd.read_csv(args.output_results)
     if 'S285' in config.cache_dir or 'S595' in config.cache_dir:
-        # # : 285
+        # # : S285 and S595
         results = results.groupby('mutstr').agg(ddG_pred_max= ("ddG_pred", "max"),
                                                 ddG=("ddG", "mean"),
                                                 num_muts=("num_muts", "mean")).reset_index()
@@ -260,7 +260,7 @@ if __name__ == '__main__':
         df_metrics.to_csv(args.output_metrics)
         print(df_metrics)
     elif 'S494' in config.cache_dir:
-        # # : 494
+        # # : S494
         results = results.groupby('mutstr').agg(ddG_pred_max=("ddG_pred", "max"),
                                                 ddG=("ddG", "mean"),
                                                 num_muts=("num_muts", "mean")).reset_index()

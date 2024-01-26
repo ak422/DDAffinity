@@ -43,11 +43,6 @@ def convert_results_to_table(result):
         row = {
             'index': index,
             'pdbcode': item['pdbcode'],
-            # 'complex': '{}_{}_{}'.format(
-            #     item['pdbcode'],
-            #     ''.join(sorted(item['group_ligand'])),
-            #     ''.join(sorted(item['group_receptor'])),
-            # ),
             'complex': item['complex'],
             'mutstr': item['mutstr'],
             'num_muts': len(item['mutations']),

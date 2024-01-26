@@ -83,12 +83,7 @@ class PaddingCollate(object):
         batch = default_collate(data_list_padded)
         batch['size'] = len(data_list_padded)
         ddG = torch.tensor([data["wt"]["ddG"] for data in data_list],dtype=torch.float32).unsqueeze(-1)
-        # fitted_data = torch.tensor([data["wt"]["fitted_data"] for data in data_list], dtype=torch.float32).unsqueeze(-1)
         batch['ddG'] = ddG
 
-        # single-mutation & multi-mutation
-        # batch['mut_type'] = torch.tensor(data["wt"]['num_muts'] > 1, dtype=torch.long)
-
-        # batch['fitted_data'] = fitted_data
         return batch
 
