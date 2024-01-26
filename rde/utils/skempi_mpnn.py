@@ -161,7 +161,7 @@ def analyze_all_results(df):
     }
     analysis = []
     for dataset in tqdm(datasets):
-        assert dataset in ['SKEMPI2', '6M0J']
+        assert dataset in ['SKEMPI2', 'case_study']
         df_this = df[df['datasets'] == dataset]
         result = {
             'dataset': dataset,

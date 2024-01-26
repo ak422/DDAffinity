@@ -255,7 +255,7 @@ if __name__ == '__main__':
                                                 ddG=("ddG", "mean"),
                                                 num_muts=("num_muts", "mean")).reset_index()
         results['ddG_pred'] = results['ddG_pred_max']
-        results['datasets'] = 'S285/S595'
+        results['datasets'] = 'case_study'
         df_metrics = eval_skempi_three_modes(results)
         df_metrics.to_csv(args.output_metrics)
         print(df_metrics)
@@ -265,6 +265,6 @@ if __name__ == '__main__':
                                                 ddG=("ddG", "mean"),
                                                 num_muts=("num_muts", "mean")).reset_index()
         results['rank'] = (results['ddG_pred_max']).rank() / len(results)
-        results['datasets'] = 'S494'
+        results['datasets'] = 'case_study'
         if 'interest' in config and config.interest:
             print(results[results['mutstr'].isin(config.interest)])
