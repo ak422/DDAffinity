@@ -16,10 +16,11 @@ from collections import defaultdict
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 
 def main():
-    df = pd.read_csv('../../data/SKEMPI2/M1340.csv')
+    subset = "M1340"
+    df = pd.read_csv(f'../../data/SKEMPI2/{subset}.csv')
     for i, pdb_dict in df.iterrows():
         pdb_dir = '../../data/SKEMPI2/PDBs'
-        workdir = '../../data/SKEMPI2/M1340_cache'
+        workdir = f'../../data/SKEMPI2/{subset}_cache'
         pdbcode = pdb_dict["#Pdb_origin"]
         if pdbcode == "1KBH":
             print("1KBH is locked!")
@@ -38,7 +39,7 @@ def main():
         wildstr = ",".join(wild_list) + ";"
         mutstr = ",".join(mut_list) + ";"
 
-        graph_out = os.path.join("../../data/SKEMPI2/SKEMPI2_cache/optimized1", f"{str(i)}_{pdbcode}.pdb")
+        graph_out = os.path.join(f"../../data/SKEMPI2/{subset}_cache/optimized1", f"{str(i)}_{pdbcode}.pdb")
         os.system("mkdir -p {}".format(os.path.dirname(graph_out)))
         if os.path.exists(graph_out):
             print(f"{str(i)}_{pdbcode}.pdb exist!")

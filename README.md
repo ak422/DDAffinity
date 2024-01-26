@@ -20,6 +20,11 @@ The default PyTorch version is 1.12.1 and cudatoolkit version is 11.3. They can 
 
 We generated all protein mutant complex PDB data and wild-type complex PDB data from PDBs file [data/SKEMPI2/PDBs](https://drive.google.com/file/d/1SQTxpGr3P9hFhzmPCGIlAf0ggBSVoDVi/view?usp=drive_link), rde/datasets/FoldX.py, [data/SKEMPI2/SKEMPI2.csv](https://drive.google.com/file/d/15KHjAh_wIcoEbEmS5AHslewJHArgBvIc/view?usp=drive_link), and [FoldX](https://foldxsuite.crg.eu/) tool. Then we use rde/datasets/skempi_parallel.py to transform the PDB files of wild-type and mutant complexes into processed dataset [SKEMPI2_cache](https://drive.google.com/file/d/1p2ky9I8CwbCErGF0fw9jrAvrFkV95ZMe/view?usp=drive_link).
 
+```bash
+python PBD_generate.py 
+python skempi_parallel.py --reset
+```
+
 ### Datasets
 
 | Dataset                                      | Download Script                                   | Processed Dataset                                                                                                     |
@@ -45,31 +50,31 @@ The M1340 trained weights is located in:
 ### Evaluate DDAffinity
 
 ```bash
-python test_DDAffinity.py ./configs/train/mpnn_ddg.yml --device cuda:1
+python test_DDAffinity.py ./configs/train/mpnn_ddg.yml --device cuda:0
 ```
 
 ### Blind testing: non-redundant blind testing on the multiple point mutation dataset M595
 
 ```bash
-python case_study.py ./configs/inference/blind_testing.yml --device cuda:1
+python case_study.py ./configs/inference/blind_testing.yml --device cuda:0
 ```
 
 ### Case Study 1: Predict Mutation Effects for SARS-CoV-2 RBD
 
 ```bash
-python case_study.py ./configs/inference/case_study_1.yml --device cuda:1
+python case_study.py ./configs/inference/case_study_1.yml --device cuda:0
 ```
 
 ### Case Study 2: Human Antibody Optimization
 
 ```bash
-python case_study.py ./configs/inference/case_study_2.yml --device cuda:1
+python case_study.py ./configs/inference/case_study_2.yml --device cuda:0
 ```
 
 ### Train DDAffinity
 
 ```bash
-python train_DDAffinity.py ./configs/train/mpnn_ddg.yml --num_cvfolds 10 --device cuda:1
+python train_DDAffinity.py ./configs/train/mpnn_ddg.yml --num_cvfolds 10 --device cuda:0
 ```
 # Acknowledgements
 We acknowledge that parts of our code is adapted from [Rotamer Density Estimator (RDE)](https://github.com/luost26/RDE-PPI). Thanks to the authors for sharing their codes. 
