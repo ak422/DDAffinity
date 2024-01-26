@@ -20,11 +20,11 @@ def main():
     for i, pdb_dict in df.iterrows():
         pdb_dir = '../../data/SKEMPI2/PDBs'
         workdir = '../../data/SKEMPI2/SKEMPI2_cache'
-        pdbcode = pdb_dict["#Pdb"]
+        pdbcode = pdb_dict["#Pdb_origin"]
         if pdbcode == "1KBH":
             print("1KBH is locked!")
             continue
-        pdb_id = pdb_dict["#Pdb"] + ".pdb"
+        pdb_id = pdb_dict["#Pdb_origin"] + ".pdb"
 
         mutstr = pdb_dict["Mutation(s)_cleaned"]
         mut_list = pdb_dict["Mutation(s)_cleaned"].split(",")
@@ -38,7 +38,7 @@ def main():
         wildstr = ",".join(wild_list) + ";"
         mutstr = ",".join(mut_list) + ";"
 
-        graph_out = os.path.join("../../data/SKEMPI2/SKEMPI2_cache/optimized", f"{str(i)}_{pdbcode}.pdb")
+        graph_out = os.path.join("../../data/SKEMPI2/SKEMPI2_cache/optimized1", f"{str(i)}_{pdbcode}.pdb")
         os.system("mkdir -p {}".format(os.path.dirname(graph_out)))
         if os.path.exists(graph_out):
             print(f"{str(i)}_{pdbcode}.pdb exist!")
@@ -54,7 +54,7 @@ def main():
         comm = '../../data/SKEMPI2/FoldX --command=BuildModel --pdb={}  --mutant-file={}  --output-dir={} --pdb-dir={} >{}/foldx.log'.format(pdb_id, individual_file, workdir, pdb_dir, workdir)
         os.system(comm)
 
-        wildtype_dir = os.path.join("{}/wildtype".format(workdir))
+        wildtype_dir = os.path.join("{}/wildtype1".format(workdir))
         if not os.path.exists(wildtype_dir):
             os.system("mkdir -p {}".format(wildtype_dir))
         os.system(f'mv {workdir}/{pdbcode}_1.pdb {wildtype_dir}/{str(i)}_{pdbcode}.pdb')
