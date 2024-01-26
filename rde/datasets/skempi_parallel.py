@@ -492,10 +492,10 @@ def get_skempi_dataset(cfg):
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('--csv_path', type=str, default='../../data/SKEMPI2/SKEMPI2.csv')
-    parser.add_argument('--pdb_wt_dir', type=str, default='../../data/SKEMPI2/SKEMPI2_cache/wildtype1')
-    parser.add_argument('--pdb_mt_dir', type=str, default='../../data/SKEMPI2/SKEMPI2_cache/optimized1')
-    parser.add_argument('--cache_dir', type=str, default='../../data/SKEMPI2/SKEMPI2_cache/entries_cache1')
+    parser.add_argument('--csv_path', type=str, default='../../data/SKEMPI2/S1131.csv')
+    parser.add_argument('--pdb_wt_dir', type=str, default='../../data/SKEMPI2/S1131_cache/wildtype1')
+    parser.add_argument('--pdb_mt_dir', type=str, default='../../data/SKEMPI2/S1131_cache/optimized1')
+    parser.add_argument('--cache_dir', type=str, default='../../data/SKEMPI2/S1131_cache/entries_cache1')
     parser.add_argument('--reset', action='store_true', default=False)
     args = parser.parse_args()
 

@@ -64,6 +64,10 @@ def parse_mmcif_assembly(path, model_id, assembly_id=0, unknown_threshold=1.0):
 
 def parse_biopython_structure(entity, chains_ordered,  unknown_threshold=1.0):
     chains = Selection.unfold_entities(entity, 'C')
+    # delete invalid chain
+    for i, chain in enumerate(chains):
+        if chain.id == " ":
+            del chains[i]
     index_dict = {k: i for i, k in enumerate(chains_ordered)}
     chains = sorted(chains, key=lambda x: index_dict[x])
 

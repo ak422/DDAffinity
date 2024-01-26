@@ -16,10 +16,10 @@ from collections import defaultdict
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 
 def main():
-    df = pd.read_csv('../../data/SKEMPI2/SKEMPI2.csv')
+    df = pd.read_csv('../../data/SKEMPI2/M1340.csv')
     for i, pdb_dict in df.iterrows():
         pdb_dir = '../../data/SKEMPI2/PDBs'
-        workdir = '../../data/SKEMPI2/SKEMPI2_cache'
+        workdir = '../../data/SKEMPI2/M1340_cache'
         pdbcode = pdb_dict["#Pdb_origin"]
         if pdbcode == "1KBH":
             print("1KBH is locked!")
