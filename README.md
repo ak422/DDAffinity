@@ -37,8 +37,8 @@ We generated all protein mutant complex PDB data and wild-type complex PDB data 
 The overall SKEMPI2 trained weights is located in:
 [DDAffinity](https://drive.google.com/file/d/1JLdHrKkwWLTsiNBaH8-x9qnEpfp9q-73/view?usp=drive_link)
 
-The S1340 trained weights is located in:
-[S1340](https://drive.google.com/file/d/12_nh2Z1PA16Icm1H1dh_ndafPnGMdm1Z/view?usp=drive_link)
+The M1340 trained weights is located in:
+[M1340](https://drive.google.com/file/d/12_nh2Z1PA16Icm1H1dh_ndafPnGMdm1Z/view?usp=drive_link)
 
 ## Usage
 

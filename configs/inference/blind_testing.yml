@@ -1,4 +1,4 @@
-checkpoint: ./trained_models/S1340.pt
+checkpoint: ./trained_models/M1340.pt
 early_stoppingdir: ./early_stopping
 model:
   encoder:
@@ -34,9 +34,9 @@ train:
     weight_decay: 0.0
     beta1: 0.9
     beta2: 0.999
-pdb_wt_dir: ./data/SKEMPI2/S595_cache/wildtype1
-pdb_mt_dir: ./data/SKEMPI2/S595_cache/optimized1
-cache_dir: ./data/SKEMPI2/S595_cache/entries_cache1
+pdb_wt_dir: ./data/SKEMPI2/M595_cache/wildtype1
+pdb_mt_dir: ./data/SKEMPI2/M595_cache/optimized1
+cache_dir: ./data/SKEMPI2/M595_cache/entries_cache1
 mutations:
 # H-CDR1
 - GH26*
