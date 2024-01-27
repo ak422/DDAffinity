@@ -249,9 +249,9 @@ if __name__ == '__main__':
     results.to_csv(args.output_results, index=False)
 
     results = pd.read_csv(args.output_results)
-    if 'S285' in config.cache_dir or 'S595' in config.cache_dir:
-        # # : S285 and S595
-        results = results.groupby('mutstr').agg(ddG_pred_max= ("ddG_pred", "max"),
+    if 'S285' in config.cache_dir or 'M595' in config.cache_dir:
+        # # : S285 and M595
+        results = results.groupby('pdbcode').agg(ddG_pred_max= ("ddG_pred", "max"),
                                                 ddG=("ddG", "mean"),
                                                 num_muts=("num_muts", "mean")).reset_index()
         results['ddG_pred'] = results['ddG_pred_max']
