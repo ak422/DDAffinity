@@ -12,7 +12,7 @@ torch.backends.cuda.matmul.allow_tf32 = True
 torch.backends.cudnn.allow_tf32 = True
 
 from rde.utils.misc import BlackHole, load_config, seed_all, get_logger, get_new_dir, current_milli_time
-from rde.utils.train import *
+# from rde.utils.train import *
 from rde.models.rde_ddg import DDG_RDE_Network
 from rde.models.protein_mpnn_network_2 import DDAffinity_NET
 from rde.utils.skempi_mpnn import SkempiDatasetManager
