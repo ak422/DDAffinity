@@ -30,7 +30,7 @@ class AAEmbedding(nn.Module):
     def to_rbf(self, D, D_min, D_max, stride):
         D_count = int((D_max - D_min) / stride)
         D_mu = torch.linspace(D_min, D_max, D_count)
-        D_mu = D_mu.view(1, 1, -1).to(D.device)  # [1, 1, K]
+        D_mu = D_mu.view(1, 1, -1)  # [1, 1, K]
         D_expand = torch.unsqueeze(D, -1)  # [B, N, 1]
         return torch.exp(-((D_expand - D_mu) / stride) ** 2)
 
@@ -47,7 +47,7 @@ class AAEmbedding(nn.Module):
 
     def forward(self, x, raw=False):
         B, N = x.size(0), x.size(1)
-        aa_vecs = self.embedding.to(x.device)[x.view(-1)].view(B, N, -1)
+        aa_vecs = self.embedding[x.view(-1)].view(B, N, -1)
         rbf_vecs = self.transform(aa_vecs).to(x.device)
         return aa_vecs if raw else self.mlp(rbf_vecs)
 
