@@ -14,10 +14,10 @@ torch.backends.cudnn.allow_tf32 = True
 from rde.utils.misc import BlackHole, load_config, seed_all, get_logger, get_new_dir, current_milli_time
 # from rde.utils.train import *
 from rde.models.rde_ddg import DDG_RDE_Network
-from rde.models.protein_mpnn_network_2 import DDAffinity_NET
+from rde.models.protein_mpnn_network_2 import ProteinMPNN_NET
 from rde.utils.skempi_mpnn import SkempiDatasetManager
 from rde.utils.transforms import get_transform
-from rde.utils.train_mpnn import CrossValidation
+from rde.utils.train_mpnn import *
 from rde.utils.early_stopping import EarlyStopping
 
 import warnings
@@ -74,7 +74,7 @@ if __name__ == '__main__':
     # Model, Optimizer & Scheduler
     logger.info('Building model...')
     cv_mgr = CrossValidation(
-        model_factory=DDAffinity_NET,
+        model_factory=ProteinMPNN_NET,
         config=config,
         early_stoppingdir=early_stoppingdir,
         num_cvfolds=args.num_cvfolds

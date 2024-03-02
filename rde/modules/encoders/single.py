@@ -5,12 +5,8 @@ from rde.modules.common.layers import AngularEncoding
 class AAEmbedding(nn.Module):
     def __init__(self, feat_dim, infeat_dim):
         super(AAEmbedding, self).__init__()
-        self.hydropathy = {'-': 0, '#': 0, "I": 4.5, "V": 4.2, "L": 3.8, "F": 2.8, "C": 2.5, "M": 1.9, "A": 1.8, "W": -0.9,
-                           "G": -0.4, "T": -0.7, "S": -0.8, "Y": -1.3, "P": -1.6, "H": -3.2, "N": -3.5, "D": -3.5,
-                           "Q": -3.5, "E": -3.5, "K": -3.9, "R": -4.5}
-        self.volume = {'-': 0, '#': 0, "G": 60.1, "A": 88.6, "S": 89.0, "C": 108.5, "D": 111.1, "P": 112.7, "N": 114.1,
-                       "T": 116.1, "E": 138.4, "V": 140.0, "Q": 143.8, "H": 153.2, "M": 162.9, "I": 166.7, "L": 166.7,
-                       "K": 168.6, "R": 173.4, "F": 189.9, "Y": 193.6, "W": 227.8}
+        self.hydropathy = {'-': 0, '#': 0, "I": 4.5, "V": 4.2, "L": 3.8, "F": 2.8, "C": 2.5, "M": 1.9, "A": 1.8, "W": -0.9, "G": -0.4, "T": -0.7, "S": -0.8, "Y": -1.3, "P": -1.6, "H": -3.2, "N": -3.5, "D": -3.5, "Q": -3.5, "E": -3.5, "K": -3.9, "R": -4.5}
+        self.volume = {'-': 0, '#': 0, "G": 60.1, "A": 88.6, "S": 89.0, "C": 108.5, "D": 111.1, "P": 112.7, "N": 114.1, "T": 116.1, "E": 138.4, "V": 140.0, "Q": 143.8, "H": 153.2, "M": 162.9, "I": 166.7, "L": 166.7, "K": 168.6, "R": 173.4, "F": 189.9, "Y": 193.6, "W": 227.8}
         self.charge = {**{'R': 1, 'K': 1, 'D': -1, 'E': -1, 'H': 0.1}, **{x: 0 for x in 'ABCFGIJLMNOPQSTUVWXYZ#-'}}
         self.polarity = {**{x: 1 for x in 'RNDQEHKSTY'}, **{x: 0 for x in "ACGILMFPWV#-"}}
         self.acceptor = {**{x: 1 for x in 'DENQHSTY'}, **{x: 0 for x in "RKWACGILMFPV#-"}}
@@ -34,7 +30,7 @@ class AAEmbedding(nn.Module):
     def to_rbf(self, D, D_min, D_max, stride):
         D_count = int((D_max - D_min) / stride)
         D_mu = torch.linspace(D_min, D_max, D_count)
-        D_mu = D_mu.view(1, 1, -1)  # [1, 1, K]
+        D_mu = D_mu.view(1, 1, -1).to(D.device)  # [1, 1, K]
         D_expand = torch.unsqueeze(D, -1)  # [B, N, 1]
         return torch.exp(-((D_expand - D_mu) / stride) ** 2)
 
@@ -51,7 +47,7 @@ class AAEmbedding(nn.Module):
 
     def forward(self, x, raw=False):
         B, N = x.size(0), x.size(1)
-        aa_vecs = self.embedding[x.view(-1)].view(B, N, -1)
+        aa_vecs = self.embedding.to(x.device)[x.view(-1)].view(B, N, -1)
         rbf_vecs = self.transform(aa_vecs).to(x.device)
         return aa_vecs if raw else self.mlp(rbf_vecs)
 
