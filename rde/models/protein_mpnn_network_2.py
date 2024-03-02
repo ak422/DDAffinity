@@ -24,7 +24,6 @@ from collections import Counter
 from .rde import CircularSplineRotamerDensityEstimator
 from scipy import stats, special
 
-
 class PositionalEncodings(nn.Module):
     def __init__(self, num_embeddings, max_relative_feature=32):
         super(PositionalEncodings, self).__init__()
@@ -571,6 +570,7 @@ class LogCoshLoss(torch.nn.Module):
     def forward(self, y_t, y_prime_t):
         ey_t = y_t - y_prime_t
         return torch.mean(torch.log(torch.cosh(ey_t + 1e-12)))
+
 class ProteinMPNN_NET(nn.Module):
     NUM_CHI_ANGLES = 4
     def __init__(self, cfg, num_letters=21, readout="sum", train_chi_id=None):
