@@ -12,8 +12,6 @@ torch.backends.cuda.matmul.allow_tf32 = True
 torch.backends.cudnn.allow_tf32 = True
 
 from rde.utils.misc import BlackHole, load_config, seed_all, get_logger, get_new_dir, current_milli_time
-# from rde.utils.train import *
-from rde.models.rde_ddg import DDG_RDE_Network
 from rde.models.protein_mpnn_network_2 import ProteinMPNN_NET
 from rde.utils.skempi_mpnn import SkempiDatasetManager
 from rde.utils.transforms import get_transform
@@ -123,7 +121,7 @@ if __name__ == '__main__':
             'time_forward': (time_forward_end - time_start) / 1000,
             'time_backward': (time_backward_end - time_forward_end) / 1000,
         })
-        # log_losses(loss, loss_dict, scalar_dict, it=it, tag='train', logger=logger, writer=writer)
+        log_losses(loss, loss_dict, scalar_dict, it=it, tag='train', logger=logger, writer=writer)
 
     def validate(it):
         scalar_accum = ScalarMetricAccumulator()

@@ -14,7 +14,6 @@ import random
 from rde.utils.misc import inf_iterator, BlackHole
 from rde.utils.data_skempi_mpnn import PaddingCollate
 from rde.utils.transforms import get_transform
-from rde.datasets import SkempiDataset
 from rde.datasets import SkempiDataset_lmdb
 
 from torch.utils.data import Sampler,BatchSampler

@@ -1,2 +1,1 @@
-from .rde import CircularSplineRotamerDensityEstimator
-from .rde_ddg import DDG_RDE_Network
+from .protein_mpnn_network_2 import ProteinMPNN_NET

@@ -21,7 +21,6 @@ from rde.utils.transforms.noise import set_chis
 from rde.utils.transforms.noise import ChiSelection,remove_by_chi
 from copy import deepcopy
 from collections import Counter
-from .rde import CircularSplineRotamerDensityEstimator
 from scipy import stats, special
 
 class PositionalEncodings(nn.Module):
