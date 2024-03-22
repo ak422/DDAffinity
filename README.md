@@ -36,7 +36,7 @@ The default PyTorch version is 1.12.1 and cudatoolkit version is 11.3. They can 
 We generated all protein mutant complex PDB data and wild-type complex PDB data from PDBs file [data/SKEMPI2/PDBs](https://drive.google.com/file/d/1SQTxpGr3P9hFhzmPCGIlAf0ggBSVoDVi/view?usp=drive_link), rde/datasets/PDB_generate.py, [data/SKEMPI2/SKEMPI2.csv](https://drive.google.com/file/d/15KHjAh_wIcoEbEmS5AHslewJHArgBvIc/view?usp=drive_link), and [FoldX](https://foldxsuite.crg.eu/) tool. Then we use rde/datasets/skempi_parallel.py to transform the PDB files of wild-type and mutant complexes into processed dataset [SKEMPI2_cache](https://drive.google.com/file/d/1p2ky9I8CwbCErGF0fw9jrAvrFkV95ZMe/view?usp=drive_link).
 
 ```bash
-python PBD_generate.py 
+python PDB_generate.py 
 python skempi_parallel.py --reset
 ```
 
