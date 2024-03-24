@@ -28,7 +28,6 @@ from rde.utils.train_mpnn import *
 
 from rde.utils.transforms import Compose, SelectAtom,AddAtomNoise, SelectedRegionFixedSizePatch
 from rde.utils.protein.parsers import parse_biopython_structure
-# from rde.models.rde_ddg import DDG_RDE_Network
 from rde.models.protein_mpnn_network_2 import ProteinMPNN_NET
 from rde.utils.skempi_mpnn import  SkempiDatasetManager, eval_skempi_three_modes
 
