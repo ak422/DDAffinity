@@ -5,12 +5,12 @@ sys.path.append('../..')
 import os
 import copy
 import random
+import pandas as pd
 import pickle
 import math
 import torch
 import lmdb
 import numpy as np
-import pandas as pd
 from torch.utils.data import Dataset
 from tqdm.auto import tqdm
 from Bio.PDB.PDBParser import PDBParser
