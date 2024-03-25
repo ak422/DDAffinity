@@ -123,6 +123,11 @@ if __name__ == '__main__':
         })
         log_losses(loss, loss_dict, scalar_dict, it=it, tag='train', logger=logger, writer=writer)
 
+        if it >= config.train.early_stop_iters and \
+                it % config.train.val_freq == 0 and \
+                early_stopping.early_stop == False:
+            early_stopping(loss.item(), model, fold)
+
     def validate(it):
         scalar_accum = ScalarMetricAccumulator()
         results = []
@@ -159,8 +164,6 @@ if __name__ == '__main__':
                 results_fold = pd.DataFrame(results_fold)
                 pearson_fold = results_fold[['ddG', 'ddG_pred']].corr('pearson').iloc[0, 1]
 
-                if it >= config.train.early_stop_iters and early_stopping.early_stop == False :
-                    early_stopping(pearson_fold, model,fold)
 
         results = pd.DataFrame(results)
         if ckpt_dir is not None:
