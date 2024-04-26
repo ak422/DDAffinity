@@ -56,7 +56,7 @@ python skempi_parallel.py --reset
 
 ### Trained Weights
 The overall SKEMPI2 trained weights is located in:
-[DDAffinity](https://drive.google.com/file/d/1JLdHrKkwWLTsiNBaH8-x9qnEpfp9q-73/view?usp=drive_link)
+[DDAffinity](https://drive.google.com/file/d/1-7XvZ0VjPtIcXHKgTwsNjQB35nOx2Ml8/view?usp=drive_link)
 
 The M1340 trained weights is located in:
 [M1340](https://drive.google.com/file/d/12_nh2Z1PA16Icm1H1dh_ndafPnGMdm1Z/view?usp=drive_link)

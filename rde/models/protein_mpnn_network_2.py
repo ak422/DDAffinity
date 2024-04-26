@@ -105,7 +105,7 @@ class GaussianLayer(nn.Module):
         self.bias = nn.Embedding(edge_types, 1)       # padding_idx: 标记输入中的填充值
 
         self.max_aa_types = max_aa_types
-        self.aa_pair_embed = nn.Embedding(self.max_aa_types * self.max_aa_types, self.K, padding_idx=441)
+        self.aa_pair_embed = nn.Embedding(self.max_aa_types * self.max_aa_types, self.K, padding_idx=21)
 
     def gather_nodes(self, nodes, neighbor_idx):
         # Features [B,N,C] at Neighbor indices [B,N,K] => [B,N,K,C]
@@ -118,7 +118,12 @@ class GaussianLayer(nn.Module):
         return neighbor_features
     def forward(self, aa, X, E_idx, mask_atoms, mask_attend):
         # Pair identities[氨基酸类型pair编码]
-        aa_pair = aa[:, :, None] * self.max_aa_types + aa[:, None, :]  # (N, L, L)
+        # aa_pair = aa[:, :, None] * self.max_aa_types + aa[:, None, :]  # (N, L, L)
+
+        aa_pair = ((aa[:, :, None] + 1) % self.max_aa_types) * self.max_aa_types + \
+                  ((aa[:, None, :] + 1) % self.max_aa_types)
+        aa_pair = torch.clamp(aa_pair, min=21)
+        aa_pair = torch.where(aa_pair % self.max_aa_types == 0, 21, aa_pair)
 
         aa_pair_neighbor = torch.gather(aa_pair, 2, E_idx)
         feat_aapair = self.aa_pair_embed(aa_pair_neighbor.to(torch.long))
@@ -167,18 +172,21 @@ class ProteinFeatures(nn.Module):
 
         self.dropout = nn.Dropout(0.1)
 
-    def _dist(self, X, mask, residue_idx, eps=1E-6):
+    def _dist(self, X, mask, residue_idx, res_nb, eps=1E-6):
         """ Pairwise euclidean distances """
         N = X.size(1)
         # 序列最近邻
-        residue_offset = residue_idx[:, :, None] - residue_idx[:, None, :]  # 氨基酸顺序偏移量
-        sequence_idx = torch.arange(self.patch_size, dtype=torch.long).unsqueeze(0).expand(X.size(0),-1).to(X.device)
-        sequence_offset = sequence_idx[:, :, None] - sequence_idx[:, None, :]
-
-        offset = ((torch.abs(residue_offset) < 50) & (torch.abs(sequence_offset) <= self.seq_neighbours)).float()  # mask self
+        # residue_offset = residue_idx[:, :, None] - residue_idx[:, None, :]  # 氨基酸顺序偏移量
+        # sequence_idx = torch.arange(self.patch_size, dtype=torch.long).unsqueeze(0).expand(X.size(0),-1).to(X.device)
+        # sequence_offset = sequence_idx[:, :, None] - sequence_idx[:, None, :]
+        # < 50： 确保是单链范围
+        # offset = ((torch.abs(residue_offset) < 50) & (torch.abs(sequence_offset) < self.seq_neighbors/2)).float()  # mask self
+        rel_residue = residue_idx[:, :, None] - residue_idx[:, None, :]
+        rel_seq = res_nb[:, :, None] - res_nb[:, None, :]
+        offset = ((torch.abs(rel_residue) < 99) & (torch.abs(rel_seq) <= (self.seq_neighbours - 1)/2   )).float()  # mask self
         D_sequence  = residue_idx[:, None, :] * offset  # 使得mask残基对齐
         offset_neighbors, E_idx_sequential = torch.topk(D_sequence,
-                                                       np.minimum(self.seq_neighbours * 2 + 1, offset.shape[-1]),
+                                                       np.minimum(self.seq_neighbours, offset.shape[-1]),
                                                        dim=-1, largest=True) # 取最大值
         mask_sequential = offset_neighbors > 0.0
 
@@ -313,6 +321,7 @@ class ProteinFeatures(nn.Module):
         X = batch["pos_atoms"]
         mask_atom = batch["mask_atoms"]   # N = 0; CA = 1; C = 2; O = 3; CB = 4;
         residue_idx = batch["residue_idx"]
+        res_nb = batch["res_nb"]
         chain_labels = batch["chain_nb"]     # # d_chains：链内和链间标记，为1表示链内
         mask_residue = batch["mask"]
         aa = batch["aa"]
@@ -321,7 +330,7 @@ class ProteinFeatures(nn.Module):
         Cb = X[:, :, 4, :]
 
         # 这里考虑用Cb原子来计算最短距离
-        E_idx_spatial, mask_spatial, E_idx_sequential, mask_sequential,E_idx_nonsequential,mask_nonsequential = self._dist(Cb, mask_residue, residue_idx)
+        E_idx_spatial, mask_spatial, E_idx_sequential, mask_sequential,E_idx_nonsequential,mask_nonsequential = self._dist(Cb, mask_residue, residue_idx, res_nb)
 
         # spactial coding & sequential coding
         E_idx = torch.cat([E_idx_spatial,E_idx_nonsequential, E_idx_sequential], dim=-1)
@@ -336,7 +345,7 @@ class ProteinFeatures(nn.Module):
         E = self.gbf_proj(E) * mask_attend.unsqueeze(-1)
 
         idx_spatial = self.top_k + self.seq_nonneighbours
-        idx_seq_neighbours = 2 * self.seq_neighbours + 1
+        idx_seq_neighbours = self.seq_neighbours
         # idx_spatial = self.top_k  # nonneighbours[no]
 
         E_spatial = E[...,:idx_spatial,:]
@@ -641,8 +650,8 @@ class ProteinMPNN_NET(nn.Module):
 
         self.out_layer = OutLayer(hidden_dim*3, hidden_dim, dropout=cfg.dropout)
         self.W_out = nn.Linear(hidden_dim, num_letters, bias=True)
-        self.enc_centrality = nn.Parameter(torch.zeros(1, 2*cfg.seq_neighbours+1+cfg.k_neighbors+cfg.seq_nonneighbours))
-        # self.enc_centrality = nn.Parameter(torch.zeros(1, 2 * cfg.seq_neighbours + 1 + cfg.k_neighbors))
+        self.enc_centrality = nn.Parameter(torch.zeros(1, cfg.seq_neighbours + cfg.k_neighbors + cfg.seq_nonneighbours))
+        # self.enc_centrality = nn.Parameter(torch.zeros(1, cfg.seq_neighbours + cfg.k_neighbors))
         # self.enc_centrality = nn.Parameter(torch.zeros(1, cfg.k_neighbors + cfg.seq_nonneighbours))
 
         # Pred
@@ -663,16 +672,21 @@ class ProteinMPNN_NET(nn.Module):
         # Gather and re-pack
         neighbor_features = torch.gather(nodes, 1, neighbors_flat)
         neighbor_features = neighbor_features.view(list(neighbor_idx.shape)[:2] + [-1])
-        # 　增加可学习参数
-        neighbor_features = neighbor_features+ self.enc_centrality.unsqueeze(0)
-        neighbor_centrality = torch.sum(neighbor_features, dim=-1) * mask
+        # # 　增加可学习参数
 
-        neighbor_centrality = (neighbor_centrality / torch.max(neighbor_centrality, dim=-1)[0].unsqueeze(-1) )* mask
+        neighbor_features = neighbor_features + self.enc_centrality.unsqueeze(0)
+        # neighbor_centrality = (neighbor_features / neighbor_features.max(dim=-1)[0].unsqueeze(-1))
+        # neighbor_centrality_sum = torch.sum(neighbor_centrality, dim=-1) * mask
 
-        return neighbor_centrality
+        neighbor_centrality_sum = torch.nn.functional.normalize(torch.sum(neighbor_features, dim=-1), dim=-1) * mask
+
+        h_centrality = neighbor_centrality_sum[:, :, None]
+
+        return h_centrality
 
     def dihedral_encode(self, batch, chi_flag, code_idx):
         mask_residue = batch['mask']
+        res_nb = batch['res_nb']
         if chi_flag == True:
             chi = batch['chi'] * (1 - batch['mut_flag'].float())[:, :, None]
         else:
@@ -683,7 +697,7 @@ class ProteinMPNN_NET(nn.Module):
             phi = batch['phi'], phi_mask = batch['phi_mask'],
             psi = batch['psi'], psi_mask = batch['psi_mask'],
             chi = chi, chi_mask = batch['chi_mask'],
-            mask_residue = mask_residue,
+            mask_residue = mask_residue,res_nb=res_nb,
         )
         # 氨基酸极性编码
         seq_emb = self.embeddinges[code_idx](batch['aa'])
@@ -726,7 +740,7 @@ class ProteinMPNN_NET(nn.Module):
         h_EXV_out = self.out_layer(h_S, h_V, h_E, E_idx, mask_attend, mask)  # h_i(dec) || h_j(enc) || h_j || h_edge
         # # 中心性
         h_centrality = self.gather_centrality(batch["centrality"], E_idx, mask)
-        h_EXV_out = h_EXV_out * h_centrality[:,:,None]
+        h_EXV_out = h_EXV_out * h_centrality
 
         return h_EXV_out
 

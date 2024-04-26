@@ -65,28 +65,29 @@ if __name__ == '__main__':
     )
 
     results = []
-    with torch.no_grad():
-        for fold in range(num_cvfolds):
-            model, _, _ = cv_mgr.get(fold)
-            model.eval()
-            for batch in tqdm(dataset_mgr.get_val_loader(fold), desc=f'Fold {fold+1}/{num_cvfolds}', dynamic_ncols=True):
+    for fold in range(num_cvfolds):
+        print(f'Resuming from checkpoint: Fold_{fold}_best_network.pt')
+        model, _, _ = cv_mgr.get(fold)
+        with torch.no_grad():
+            for i, batch in enumerate(tqdm(dataset_mgr.get_val_loader(fold), desc='Validate', dynamic_ncols=True)):
                 # Prepare data
                 batch = recursive_to(batch, args.device)
-                _, out_dict = model(batch)
-                ddg_pred = out_dict['ddG_pred'].squeeze(-1)
 
-                for complex, mutstr, ddG_pred, ddG in zip(batch['wt']['complex'], batch['wt']['mutstr'],
-                                                          ddg_pred.cpu().tolist(),
-                                                          batch["wt"]['ddG'].cpu().tolist()):
+                # Forward pass
+                _, output_dict = model(batch)
+                for complex, mutstr, ddg_true, ddg_pred in zip(batch["wt"]['complex'], batch["wt"]['mutstr'],
+                                                               output_dict['ddG_true'], output_dict['ddG_pred']):
                     results.append({
                         'complex': complex,
                         'mutstr': mutstr,
                         'num_muts': len(mutstr.split(',')),
-                        'ddG': ddG,
-                        'ddG_pred': ddG_pred,
+                        'ddG': ddg_true.item(),
+                        'ddG_pred': ddg_pred.item()
                     })
 
+
     results = pd.DataFrame(results)
+
     results['datasets'] = 'SKEMPI2'
     results.to_csv(args.output_results, index=False)
 

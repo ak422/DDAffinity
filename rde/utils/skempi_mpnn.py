@@ -63,14 +63,14 @@ class SkempiDatasetManager(object):
         super().__init__()
         self.config = config
         self.num_cvfolds = num_cvfolds
-        self.train_iterators = []
+        self.train_loader = []
         self.val_loaders = []
         self.chains = []
         self.logger = logger
         self.num_workers = num_workers
         for fold in range(num_cvfolds):
-            train_iterator, val_loader = self.init_loaders(fold)
-            self.train_iterators.append(train_iterator)
+            train_loader, val_loader = self.init_loaders(fold)
+            self.train_loader.append(train_loader)
             self.val_loaders.append(val_loader)
 
     def init_loaders(self, fold):
@@ -100,7 +100,7 @@ class SkempiDatasetManager(object):
             shuffle=True,
             num_workers=self.num_workers
         )
-        train_iterator = inf_iterator(train_loader)
+        # train_iterator = inf_iterator(train_loader)
         val_loader = DataLoader(
             val_dataset, 
             batch_size=config.train.batch_size,
@@ -109,10 +109,11 @@ class SkempiDatasetManager(object):
             num_workers=self.num_workers
         )
         self.logger.info('Fold %d: Train %d, Val %d' % (fold, len(train_dataset), len(val_dataset)))
-        return train_iterator, val_loader
+        # return train_iterator, val_loader
+        return train_loader, val_loader
 
-    def get_train_iterator(self, fold):
-        return self.train_iterators[fold]
+    def get_train_loader(self, fold):
+        return self.train_loader[fold]
 
     def get_val_loader(self, fold):
         return self.val_loaders[fold]

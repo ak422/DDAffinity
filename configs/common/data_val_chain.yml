@@ -5,6 +5,5 @@ transform:
   - type: selected_region_fixed_size_patch
     select_attr: mut_flag
     patch_size: 256
-#    seq_neighbours: 2
 
   

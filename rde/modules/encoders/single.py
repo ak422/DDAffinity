@@ -14,11 +14,17 @@ class AAEmbedding(nn.Module):
 
         alphabet = 'ACDEFGHIKLMNPQRSTVWY#-'
 
-        self.embedding = torch.tensor([
-            [self.hydropathy[alphabet[i]], self.volume[alphabet[i]] / 100, self.charge[alphabet[i]],
-             self.polarity[alphabet[i]], self.acceptor[alphabet[i]], self.donor[alphabet[i]]]
-            for i in range(len(alphabet))
-        ])
+        # self.embedding = torch.tensor([
+        #     [self.hydropathy[alphabet[i]], self.volume[alphabet[i]] / 100, self.charge[alphabet[i]],
+        #      self.polarity[alphabet[i]], self.acceptor[alphabet[i]], self.donor[alphabet[i]]]
+        #     for i in range(len(alphabet))
+        # ])
+        self.register_buffer('embedding',
+            torch.tensor([
+                    [self.hydropathy[alphabet[i]], self.volume[alphabet[i]] / 100, self.charge[alphabet[i]],
+                     self.polarity[alphabet[i]], self.acceptor[alphabet[i]], self.donor[alphabet[i]]]
+                    for i in range(len(alphabet))
+            ]))
 
         self.mlp = nn.Sequential(
             nn.Linear(infeat_dim, feat_dim * 2), nn.ReLU(),
@@ -34,11 +40,18 @@ class AAEmbedding(nn.Module):
         D_expand = torch.unsqueeze(D, -1)  # [B, N, 1]
         return torch.exp(-((D_expand - D_mu) / stride) ** 2)
 
+    def to_rbf_(self, D, D_min, D_max, stride):
+        D_count = int((D_max - D_min) / stride)
+        D_mu = torch.linspace(D_min, D_max, D_count).to(D.device)
+        D_mu = D_mu.view(1, -1)  # [1, 1, K]
+        D_expand = torch.unsqueeze(D, -1)  # [B, N, 1]
+        return torch.exp(-((D_expand - D_mu) / stride) ** 2)
+
     def transform(self, aa_vecs):
         return torch.cat([
-            self.to_rbf(aa_vecs[:, :, 0], -4.5, 4.5, 0.1),
-            self.to_rbf(aa_vecs[:, :, 1], 0, 2.2, 0.1),
-            self.to_rbf(aa_vecs[:, :, 2], -1.0, 1.0, 0.25),
+            self.to_rbf_(aa_vecs[:, :, 0], -4.5, 4.5, 0.1),
+            self.to_rbf_(aa_vecs[:, :, 1], 0, 2.2, 0.1),
+            self.to_rbf_(aa_vecs[:, :, 2], -1.0, 1.0, 0.25),
             torch.sigmoid(aa_vecs[:, :, 3:] * 6 - 3),
         ], dim=-1)
 
@@ -50,13 +63,6 @@ class AAEmbedding(nn.Module):
         aa_vecs = self.embedding[x.view(-1)].view(B, N, -1)
         rbf_vecs = self.transform(aa_vecs).to(x.device)
         return aa_vecs if raw else self.mlp(rbf_vecs)
-
-    def to_rbf_(self, D, D_min, D_max, stride):
-        D_count = int((D_max - D_min) / stride)
-        D_mu = torch.linspace(D_min, D_max, D_count).cuda()
-        D_mu = D_mu.view(1, -1)  # [1, 1, K]
-        D_expand = torch.unsqueeze(D, -1)  # [B, N, 1]
-        return torch.exp(-((D_expand - D_mu) / stride) ** 2)
 
     def soft_forward(self, x):
         aa_vecs = torch.matmul(x, self.embedding)
@@ -85,7 +91,7 @@ class PerResidueEncoder(nn.Module):
             nn.Linear(feat_dim, feat_dim)
         )
 
-    def forward(self, aa, phi, phi_mask, psi, psi_mask, chi, chi_mask, mask_residue):
+    def forward(self, aa, phi, phi_mask, psi, psi_mask, chi, chi_mask, mask_residue, res_nb):
         """
         Args:
             aa: (N, L)

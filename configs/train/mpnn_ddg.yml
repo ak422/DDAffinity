@@ -8,10 +8,10 @@ model:
   node_features: 128
   edge_features: 128
   hidden_dim: 128
-  seq_neighbours:  1
-  seq_nonneighbours: 7
   num_encoder_layers: 3
   num_decoder_layers: 3
+  seq_neighbours: 3
+  seq_nonneighbours: 7
   k_neighbors: 16
   dropout: 0.1
   augment_eps: 0.2
@@ -41,21 +41,27 @@ data:
 #  cache_dir: ./data/SKEMPI2/S285_cache/entries_cache1
   train: !include ../common/data_train_chain.yml
   val: !include ../common/data_val_chain.yml
-  is_single: True
+  is_single: 2
 
 train:
   loss_weights:
     loss_mse: 1.0
-  max_iters: 100000
-  val_freq: 1000
-  early_stop_iters: 70000
+  max_epochs: &max_epochs 200
+  val_freq: 5
+  early_stopping_epoch: 150
   batch_size: 32
 
-  seed: 2022
+  seed: 2024
   max_grad_norm: 100.0
   optimizer:
-    type: adam
-    lr: 6.e-4
-    weight_decay: 0.0
-    beta1: 0.9
-    beta2: 0.999
+#    type: adam
+#    lr: 6.e-4
+#    weight_decay: 0.0
+#    beta1: 0.9
+#    beta2: 0.999
+    type: warm_up
+    warmup: 8000
+    d_model: 128
+    step: 0
+    factor: 1
+

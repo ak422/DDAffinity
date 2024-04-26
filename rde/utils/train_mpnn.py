@@ -45,10 +45,10 @@ class NoamOpt:
     def load_state_dict(self):
         return self.optimizer.load_state_dict()
 
-def get_std_opt(parameters, d_model, step, factor):
+def get_std_opt(parameters, d_model, warmup, step, factor):
     # d_model：模型特征维度，gradual warmup学习率自适应优化器
     return NoamOpt(
-        d_model, factor, 4000, torch.optim.AdamW(parameters, lr=0, betas=(0.9, 0.98), eps=1e-9), step
+        d_model, factor, warmup, torch.optim.Adam(parameters, lr=0, betas=(0.9, 0.999), eps=1e-9), step
     )
 
 
@@ -60,8 +60,20 @@ def get_optimizer(cfg, model):
             weight_decay=cfg.weight_decay,
             betas=(cfg.beta1, cfg.beta2, )
         )
+    elif cfg.type == 'adamw':
+        return torch.optim.AdamW(
+            model.parameters(),
+            lr=cfg.lr,
+            weight_decay=cfg.weight_decay,
+            betas=(cfg.beta1, cfg.beta2, )
+        )
     elif cfg.type == 'warm_up':
-        return get_std_opt(model.parameters(), 128, 0, 2)
+        return get_std_opt(
+            parameters=model.parameters(),
+            d_model=cfg.d_model,
+            warmup=cfg.warmup,
+            step=cfg.step,
+            factor=cfg.factor)
     else:
         raise NotImplementedError('Optimizer not supported: %s' % cfg.type)
 

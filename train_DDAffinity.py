@@ -1,4 +1,5 @@
 import os
+import sys
 import shutil
 import argparse
 import pandas as pd
@@ -77,7 +78,7 @@ if __name__ == '__main__':
         early_stoppingdir=early_stoppingdir,
         num_cvfolds=args.num_cvfolds
     ).to(args.device)
-    it_first = 1
+    it_first = 0
 
     # Resume
     if args.resume is not None:
@@ -86,49 +87,47 @@ if __name__ == '__main__':
         it_first = ckpt['iteration']  # + 1
         cv_mgr.load_state_dict(ckpt['model'], )
 
-    def train(it):
-        fold = it % args.num_cvfolds
+    def train_one_epoch(fold, epoch):
+        # fold = it % args.num_cvfolds
         model, optimizer, early_stopping = cv_mgr.get(fold)
-        if early_stopping.early_stop:
+        if early_stopping.early_stop == True:
             return
 
         time_start = current_milli_time()
+        mean_loss = torch.zeros(1).to(args.device)
         model.train()
         # Prepare data
-        batch = recursive_to(next(dataset_mgr.get_train_iterator(fold)), args.device)
+        # batch = recursive_to(next(dataset_mgr.get_train_iterator(fold)), args.device)
+        train_loader = dataset_mgr.get_train_loader(fold)
+        train_loader = tqdm(train_loader, file=sys.stdout)
 
-        # Forward pass
-        loss_dict, _ = model(batch)
-        loss = sum_weighted_losses(loss_dict, config.train.loss_weights)
-        time_forward_end = current_milli_time()
+        for step, data in enumerate(train_loader):
+            batch = recursive_to(data, args.device)
 
-        # Backward
-        loss.backward()
+            # Forward pass
+            loss_dict, _ = model(batch)
+            loss = sum_weighted_losses(loss_dict, config.train.loss_weights)
+            time_forward_end = current_milli_time()
 
-        orig_grad_norm = clip_grad_norm_(model.parameters(), config.train.max_grad_norm)
+            # Backward
+            loss.backward()
 
-        optimizer.step()
-        optimizer.zero_grad()
+            mean_loss = (mean_loss * step + loss.detach()) / (step + 1)  # update mean losses
+            train_loader.desc = "[epoch {} fold {}] mean loss {}".format(epoch, fold, round(mean_loss.item(), 3))
+
+            orig_grad_norm = clip_grad_norm_(model.parameters(), config.train.max_grad_norm)
+
+            optimizer.step()
+            optimizer.zero_grad()
 
         time_backward_end = current_milli_time()
+        logger.info(f'[epoch {epoch} fold {fold}] mean loss {mean_loss.item():.3f}')
 
-        # Logging
-        scalar_dict = {}
-        scalar_dict.update({
-            'fold': fold,
-            'grad': orig_grad_norm,
-            'lr': optimizer.param_groups[0]['lr'],
-            'time_forward': (time_forward_end - time_start) / 1000,
-            'time_backward': (time_backward_end - time_forward_end) / 1000,
-        })
-        log_losses(loss, loss_dict, scalar_dict, it=it, tag='train', logger=logger, writer=writer)
+        if epoch >= config.train.early_stopping_epoch \
+            and early_stopping.early_stop == False:
+            early_stopping(mean_loss.item(), model, fold)
 
-        if it >= config.train.early_stop_iters and \
-                it % config.train.val_freq == 0 and \
-                early_stopping.early_stop == False:
-            early_stopping(loss.item(), model, fold)
-
-    def validate(it):
+    def validate(epoch):
         scalar_accum = ScalarMetricAccumulator()
         results = []
         with torch.no_grad():
@@ -167,27 +166,26 @@ if __name__ == '__main__':
 
         results = pd.DataFrame(results)
         if ckpt_dir is not None:
-            results.to_csv(os.path.join(ckpt_dir, f'results_{it}.csv'), index=False)
+            results.to_csv(os.path.join(ckpt_dir, f'results_{epoch}.csv'), index=False)
         pearson_all = results[['ddG', 'ddG_pred']].corr('pearson').iloc[0, 1]
         spearman_all = results[['ddG', 'ddG_pred']].corr('spearman').iloc[0, 1]
 
         logger.info(f'[All] Pearson {pearson_all:.6f} Spearman {spearman_all:.6f}')
-        writer.add_scalar('val/all_pearson', pearson_all, it)
-        writer.add_scalar('val/all_spearman', spearman_all, it)
-
         avg_loss = scalar_accum.get_average('loss')
-        scalar_accum.log(it, 'val', logger=logger, writer=writer)
+        scalar_accum.log(epoch, 'val', logger=logger, writer=writer)
+        writer.add_scalar('val/all_pearson', pearson_all, epoch)
+        writer.add_scalar('val/all_spearman', spearman_all, epoch)
 
         return avg_loss
 
     try:
-        training_flag = True
-        for it in range(it_first, config.train.max_iters + 1):
-            train(it)
-            if it % config.train.val_freq == 0:
-                training_flag = validate(it)
-                if training_flag == False:
-                    break
+        for epoch in range(it_first, config.train.max_epochs + 1):
+            # training
+            for fold in range(args.num_cvfolds):
+                mean_loss = train_one_epoch(fold, epoch)
+
+            if epoch % config.train.val_freq == 0:
+                avg_loss = validate(epoch)
 
         if True:
             results = []

@@ -4,7 +4,7 @@ import os
 
 class EarlyStopping:
     """Early stops the training if validation loss doesn't improve after a given patience."""
-    def __init__(self, save_path, patience=7, verbose=False, delta=0):
+    def __init__(self, save_path, patience=7, verbose=False, delta=0.001):
         """
         Args:
             save_path : save path
@@ -37,6 +37,7 @@ class EarlyStopping:
             if self.counter >= self.patience:
                 self.early_stop = True
         else:
+            print(f'EarlyStopping Again: [Fold]-{fold}')
             self.best_score = score
             self.save_checkpoint(val_loss, model,fold)
             self.counter = 0
