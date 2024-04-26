@@ -20,25 +20,25 @@ model:
 
 data:
   csv_path: ./data/SKEMPI2/SKEMPI2.csv
-  pdb_wt_dir: ./data/SKEMPI2/SKEMPI2_cache/wildtype1
-  pdb_mt_dir: ./data/SKEMPI2/SKEMPI2_cache/optimized1
-  cache_dir: ./data/SKEMPI2/SKEMPI2_cache/entries_cache1
-#  csv_path: ./data/SKEMPI2/S1340.csv
-#  pdb_wt_dir: ./data/SKEMPI2/S1340_cache/wildtype1
-#  pdb_mt_dir: ./data/SKEMPI2/SS1340_cache/optimized1
-#  cache_dir: ./data/SKEMPI2/S1340_cache/entries_cache1
+  pdb_wt_dir: ./data/SKEMPI2/SKEMPI2_cache/wildtype
+  pdb_mt_dir: ./data/SKEMPI2/SKEMPI2_cache/optimized
+  cache_dir: ./data/SKEMPI2/SKEMPI2_cache/entries_cache
+#  csv_path: ./data/SKEMPI2/M1340.csv
+#  pdb_wt_dir: ./data/SKEMPI2/M1340_cache/wildtype
+#  pdb_mt_dir: ./data/SKEMPI2/MS1340_cache/optimized
+#  cache_dir: ./data/SKEMPI2/M1340_cache/entries_cache
 #  csv_path: ./data/SKEMPI2/S1131.csv
-#  pdb_wt_dir: ./data/SKEMPI2/S1131_cache/wildtype1
-#  pdb_mt_dir: ./data/SKEMPI2/S1131_cache/optimized1
-#  cache_dir: ./data/SKEMPI2/S1131_cache/entries_cache1
-#  csv_path: ./data/SKEMPI2/S1707.csv
-#  pdb_wt_dir: ./data/SKEMPI2/S1707_cache/wildtype1
-#  pdb_mt_dir: ./data/SKEMPI2/S1707_cache/optimized1
-#  cache_dir: ./data/SKEMPI2/S1707_cache/entries_cache1
+#  pdb_wt_dir: ./data/SKEMPI2/S1131_cache/wildtype
+#  pdb_mt_dir: ./data/SKEMPI2/S1131_cache/optimized
+#  cache_dir: ./data/SKEMPI2/S1131_cache/entries_cache
+#  csv_path: ./data/SKEMPI2/M1707.csv
+#  pdb_wt_dir: ./data/SKEMPI2/M1707_cache/wildtype
+#  pdb_mt_dir: ./data/SKEMPI2/M1707_cache/optimized
+#  cache_dir: ./data/SKEMPI2/M1707_cache/entries_cache
 #  csv_path: ./data/SKEMPI2/S285.csv
-#  pdb_wt_dir: ./data/SKEMPI2/S285_cache/wildtype1
-#  pdb_mt_dir: ./data/SKEMPI2/S285_cache/optimized1
-#  cache_dir: ./data/SKEMPI2/S285_cache/entries_cache1
+#  pdb_wt_dir: ./data/SKEMPI2/S285_cache/wildtype
+#  pdb_mt_dir: ./data/SKEMPI2/S285_cache/optimized
+#  cache_dir: ./data/SKEMPI2/S285_cache/entries_cache
   train: !include ../common/data_train_chain.yml
   val: !include ../common/data_val_chain.yml
   is_single: 2
@@ -46,9 +46,9 @@ data:
 train:
   loss_weights:
     loss_mse: 1.0
-  max_epochs: &max_epochs 200
+  max_epochs: &max_epochs 250
   val_freq: 5
-  early_stopping_epoch: 150
+  early_stopping_epoch: 200
   batch_size: 32
 
   seed: 2024
