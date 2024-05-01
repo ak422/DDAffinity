@@ -66,7 +66,6 @@ if __name__ == '__main__':
 
     results = []
     for fold in range(num_cvfolds):
-        print(f'Resuming from checkpoint: Fold_{fold}_best_network.pt')
         model, _, _ = cv_mgr.get(fold)
         with torch.no_grad():
             for i, batch in enumerate(tqdm(dataset_mgr.get_val_loader(fold), desc='Validate', dynamic_ncols=True)):
@@ -92,6 +91,14 @@ if __name__ == '__main__':
     results.to_csv(args.output_results, index=False)
 
     results = pd.read_csv(args.output_results)
+    # PDB:1E96.pdb and 1E50.pdb
+    results.replace("1.00E+96", "1E96", inplace = True)
+    results.replace("1.00E+50", "1E50", inplace = True)
+
+    # 显示所有列,保留3位小数
+    pd.set_option('display.max_columns', None)
+    pd.options.display.float_format = '{:.3f}'.format
+
     results['datasets'] = 'SKEMPI2'
     df_metrics = eval_skempi_three_modes(results)
     df_metrics.to_csv(args.output_metrics, index=False)

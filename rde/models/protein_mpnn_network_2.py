@@ -587,11 +587,9 @@ class ProteinMPNN_NET(nn.Module):
         # Hyperparameters
         self.node_features = cfg.node_features
         self.edge_features = cfg.edge_features
-        self._replace_rate = cfg._replace_rate
         self.num_encoder_layers = cfg.num_encoder_layers
         self.dropout = cfg.dropout
         self.patch_size = cfg.patch_size
-        self._mask_token_rate = 1 - self._replace_rate
         hidden_dim = cfg.hidden_dim
         self.num_rbf = 16
         self.seq_neighbours = cfg.seq_neighbours
