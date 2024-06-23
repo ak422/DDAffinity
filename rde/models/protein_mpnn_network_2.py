@@ -396,12 +396,10 @@ class EncLayer(nn.Module):
     def forward(self, h_V, h_E, E_idx, mask_V=None, mask_attend=None):
         """ Parallel computation of full transformer layer """
         # pre-norm
-        residual = h_V
-        h_V = self.maybe_layer_norm(0, h_V, before=True)
-
-        h_EV = cat_neighbors_nodes(h_V, h_E, E_idx)         # h_j || edge
-        h_V_expand = h_V.unsqueeze(-2).expand(-1,-1,h_EV.size(-2),-1)   # h_i
-        h_EV = torch.cat([h_V_expand, h_EV], -1)  # h_i || h_j || edge
+        h_LV = self.maybe_layer_norm(0, h_V, before=True)
+        h_EV = cat_neighbors_nodes(h_LV, h_E, E_idx)         # h_j(enc) || edge
+        h_V_expand = h_LV.unsqueeze(-2).expand(-1,-1,h_EV.size(-2),-1)   # h_i(enc)
+        h_EV = torch.cat([h_V_expand, h_EV], -1)  # h_i(enc) || h_j(enc) || edge
         h_message = self.W3(self.act(self.W2(self.act(self.W1(h_EV)))))
         if mask_attend is not None:
             h_message = mask_attend.unsqueeze(-1) * h_message
@@ -409,8 +407,7 @@ class EncLayer(nn.Module):
         dh = torch.sum(h_message, -2) / self.scale
         # ReZero
         dh = dh * self.resweight
-        h_V = residual + self.dropout1(dh)
-        h_V = self.maybe_layer_norm(0, h_V, after=True)
+        h_V = h_V + self.dropout1(dh)
 
         # pre-norm
         residual = h_V
@@ -421,21 +418,17 @@ class EncLayer(nn.Module):
         # ReZero
         dh = dh * self.resweight
         h_V = residual + self.dropout2(dh)
-        h_V = self.maybe_layer_norm(1, h_V, after=True)
 
         if mask_V is not None:
             mask_V = mask_V.unsqueeze(-1)
             h_V = mask_V * h_V
 
-        # assert not torch.any(torch.isnan(h_V)),'h_V nan exists!'
-        residual = h_E
-        h_E = self.maybe_layer_norm(2, h_E, before=True)
-        h_EV = cat_neighbors_nodes(h_V, h_E, E_idx)  # h_j || edge
+        h_LE = self.maybe_layer_norm(2, h_E, before=True)
+        h_EV = cat_neighbors_nodes(h_V, h_LE, E_idx)  # h_j || edge
         h_V_expand = h_V.unsqueeze(-2).expand(-1,-1,h_EV.size(-2),-1)  # h_i
         h_EV = torch.cat([h_V_expand, h_EV], -1)   # h_i || h_j || edge
         h_message = self.W13(self.act(self.W12(self.act(self.W11(h_EV)))))
-        h_E = residual + self.dropout3(h_message)
-        h_E = self.maybe_layer_norm(2, h_E, after=True)
+        h_E = h_E + self.dropout3(h_message)
 
         return h_V, h_E
 
@@ -469,10 +462,9 @@ class DecLayer(nn.Module):
     def forward(self, h_V, h_E, mask_V=None, mask_attend=None):
         """ Parallel computation of full transformer layer """
         # pre-norm
-        residual = h_V
-        h_V = self.maybe_layer_norm(0, h_V, before=True)
+        h_LV = self.maybe_layer_norm(0, h_V, before=True)
         # Concatenate h_V_i to h_E_ij
-        h_V_expand = h_V.unsqueeze(-2).expand(-1,-1,h_E.size(-2),-1)
+        h_V_expand = h_LV.unsqueeze(-2).expand(-1,-1,h_E.size(-2),-1)
         h_EV = torch.cat([h_V_expand, h_E], -1)
 
         h_message = self.W3(self.act(self.W2(self.act(self.W1(h_EV)))))
@@ -481,18 +473,15 @@ class DecLayer(nn.Module):
         dh = torch.sum(h_message, -2) / self.scale
         # ReZero
         dh = self.dropout1(dh) * self.resweight
-        h_V = residual + dh
-        h_V = self.maybe_layer_norm(0, h_V, after=True)
+        h_V = h_V + dh
 
         # pre-norm
-        residual = h_V
-        h_V = self.maybe_layer_norm(1, h_V, before=True)
+        h_LV = self.maybe_layer_norm(1, h_V, before=True)
         # Position-wise feedforward
-        dh = self.dense(h_V)
+        dh = self.dense(h_LV)
         # ReZero
         dh = self.dropout1(dh) * self.resweight
-        h_V = residual + dh
-        h_V = self.maybe_layer_norm(1, h_V, after=True)
+        h_V = h_V + dh
 
         if mask_V is not None:
             mask_V = mask_V.unsqueeze(-1)
