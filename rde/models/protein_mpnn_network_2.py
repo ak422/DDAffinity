@@ -410,14 +410,12 @@ class EncLayer(nn.Module):
         h_V = h_V + self.dropout1(dh)
 
         # pre-norm
-        residual = h_V
-        h_V = self.maybe_layer_norm(1, h_V, before=True)
-
+        h_LV = self.maybe_layer_norm(1, h_V, before=True)
         # Position-wise feedforward
-        dh = self.dense(h_V)
+        dh = self.dense(h_LV)
         # ReZero
         dh = dh * self.resweight
-        h_V = residual + self.dropout2(dh)
+        h_V = h_V + self.dropout2(dh)
 
         if mask_V is not None:
             mask_V = mask_V.unsqueeze(-1)
