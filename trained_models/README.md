@@ -1,3 +1,3 @@
 ### Trained model weights
 
-Trained model weights are available at [Google Driver](https://drive.google.com/drive/folders/1a0iGRL7PZV-wdgfD9m_5XV5rqRpqykro?usp=drive_link).
+Trained model weights are available at [Google Driver](https://drive.google.com/file/d/1tXCWe9M-vhporNHK04Lz-Gv479_nyoNL/view?usp=drive_link).
