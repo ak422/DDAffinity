@@ -261,12 +261,15 @@ if __name__ == '__main__':
         print(df_metrics)
     elif 'S285' in config.cache_dir:
         # # : S285
-        results = results.groupby('mutstr').agg(ddG_pred_max= ("ddG_pred", "max"),
+        results1 = results.groupby('mutstr').agg(ddG_pred_max= ("ddG_pred", "max"),
                                                 ddG=("ddG", "mean"),
                                                 num_muts=("num_muts", "mean")).reset_index()
-        results['ddG_pred'] = - results['ddG_pred_max']
-        results['datasets'] = 'case_study'
-        df_metrics = eval_skempi_three_modes(results)
+        results2 = results.groupby('mutstr').agg(ddG_pred_min= ("ddG_pred", "min"),
+                                                ddG=("ddG", "mean"),
+                                                num_muts=("num_muts", "mean")).reset_index()
+        results1['ddG_pred'] = - (results1['ddG_pred_max'] - results2['ddG_pred_min'])/2
+        results1['datasets'] = 'case_study'
+        df_metrics = eval_skempi_three_modes(results1)
         df_metrics.to_csv(args.output_metrics)
         print(df_metrics)
     elif 'S494' in config.cache_dir:
