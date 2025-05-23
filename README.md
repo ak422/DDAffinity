@@ -22,7 +22,7 @@ Overview of our DDAffinity architecture is shown below.
 
 ## Install
 
-#### DDAffinity Environment
+##### DDAffinity Environment
 
 ```bash
 conda env create -f env.yml -n DDAffinity
@@ -55,6 +55,9 @@ python skempi_parallel.py --reset
 | [Ssys.csv](https://drive.google.com/file/d/1_am6EKjYZjLXNcST-GmmYnPix2aX-DHf/view?usp=drive_link) |                         —                          | —                                                            |
 
 ### Trained Weights
+
+---
+
 The overall SKEMPI2 trained weights is located in:
 [DDAffinity](https://drive.google.com/file/d/1tXCWe9M-vhporNHK04Lz-Gv479_nyoNL/view?usp=drive_link)
 
@@ -63,36 +66,41 @@ The M1340 trained weights is located in:
 
 ### Usage
 
+---
+
 ##### Evaluate DDAffinity
 
 ```bash
 python test_DDAffinity.py ./configs/train/mpnn_ddg.yml --device cuda:0
 ```
 
-#### Blind testing: non-redundant blind testing on the multiple point mutation dataset M595
+##### Blind testing: non-redundant blind testing on the multiple point mutation dataset M595
 
 ```bash
 python case_study.py ./configs/inference/blind_testing.yml --device cuda:0
 ```
 
-#### Case Study 1: Predict Mutation Effects for SARS-CoV-2 RBD
+##### Case Study 1: Predict Mutation Effects for SARS-CoV-2 RBD
 
 ```bash
 python case_study.py ./configs/inference/case_study_1.yml --device cuda:0
 ```
 
-#### Case Study 2: Human Antibody Optimization
+##### Case Study 2: Human Antibody Optimization
 
 ```bash
 python case_study.py ./configs/inference/case_study_2.yml --device cuda:0
 ```
 
-#### Train DDAffinity
+##### Train DDAffinity
 
 ```bash
 python train_DDAffinity.py ./configs/train/mpnn_ddg.yml --num_cvfolds 10 --device cuda:0
 ```
 ### Acknowledgements
+
+---
+
 We acknowledge that parts of our code is adapted from [Rotamer Density Estimator (RDE)](https://github.com/luost26/RDE-PPI). Thanks to the authors for sharing their codes. 
 
 ### Contact
