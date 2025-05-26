@@ -20,6 +20,12 @@ Overview of our DDAffinity architecture is shown below.
 
 
 
+### Contact
+
+---
+
+- Please check out our latest work "CATH-ddG: towards robust mutation effect prediction on protein–protein interactions out of CATH homologous superfamily" on mutational effect prediction for protein-protein interactions at [github](https://github.com/ak422/CATH-ddG)
+
 ## Install
 
 ##### DDAffinity Environment
@@ -103,8 +109,3 @@ python train_DDAffinity.py ./configs/train/mpnn_ddg.yml --num_cvfolds 10 --devic
 
 We acknowledge that parts of our code is adapted from [Rotamer Density Estimator (RDE)](https://github.com/luost26/RDE-PPI). Thanks to the authors for sharing their codes. 
 
-### Contact
-
----
-
-Please check out our latest work CATH-ddG on mutational effect prediction for protein-protein interactions at [github](https://github.com/ak422/CATH-ddG)
